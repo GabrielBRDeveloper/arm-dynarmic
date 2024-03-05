@@ -19,7 +19,10 @@
 #include "dynarmic/ir/location_descriptor.h"
 
 namespace oaknut {
-struct CodeGenerator;
+struct PointerCodeGeneratorPolicy;
+template<typename>
+class BasicCodeGenerator;
+using CodeGenerator = BasicCodeGenerator<PointerCodeGeneratorPolicy>;
 struct Label;
 }  // namespace oaknut
 

@@ -10,7 +10,6 @@
 #include <memory>
 #include <type_traits>
 
-#include <mcl/bit/bit_field.hpp>
 #include <mcl/stdint.hpp>
 #include <xbyak/xbyak.h>
 #include <xbyak/xbyak_util.h>
@@ -123,13 +122,7 @@ public:
         }
     }
 
-    Xbyak::Address Const(const Xbyak::AddressFrame& frame, u64 lower, u64 upper = 0);
-
-    template<size_t esize>
-    Xbyak::Address BConst(const Xbyak::AddressFrame& frame, u64 value) {
-        return Const(frame, mcl::bit::replicate_element<u64>(esize, value),
-                     mcl::bit::replicate_element<u64>(esize, value));
-    }
+    Xbyak::Address MConst(const Xbyak::AddressFrame& frame, u64 lower, u64 upper = 0);
 
     CodePtr GetCodeBegin() const;
     size_t GetTotalCodeSize() const;

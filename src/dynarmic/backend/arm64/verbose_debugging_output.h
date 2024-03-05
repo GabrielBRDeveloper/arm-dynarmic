@@ -12,7 +12,10 @@
 #include "dynarmic/backend/arm64/stack_layout.h"
 
 namespace oaknut {
-struct CodeGenerator;
+struct PointerCodeGeneratorPolicy;
+template<typename>
+class BasicCodeGenerator;
+using CodeGenerator = BasicCodeGenerator<PointerCodeGeneratorPolicy>;
 struct Label;
 }  // namespace oaknut
 

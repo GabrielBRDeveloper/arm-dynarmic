@@ -10,7 +10,6 @@
 #include <functional>
 #include <memory>
 #include <mutex>
-#include <optional>
 #include <thread>
 #include <vector>
 
@@ -184,15 +183,7 @@ void MachHandler::RemoveCodeBlock(u64 rip) {
     code_block_infos.erase(iter);
 }
 
-std::mutex handler_lock;
-std::optional<MachHandler> mach_handler;
-
-void RegisterHandler() {
-    std::lock_guard<std::mutex> guard(handler_lock);
-    if (!mach_handler) {
-        mach_handler.emplace();
-    }
-}
+MachHandler mach_handler;
 
 }  // anonymous namespace
 
@@ -233,7 +224,7 @@ mig_external kern_return_t catch_mach_exception_raise_state(
     dynarmic_thread_state_t ts;
     std::memcpy(&ts, old_state, sizeof(ts));
 
-    kern_return_t ret = mach_handler->HandleRequest(&ts);
+    kern_return_t ret = mach_handler.HandleRequest(&ts);
 
     std::memcpy(new_state, &ts, sizeof(ts));
     *new_stateCnt = THREAD_STATE_COUNT;
@@ -243,20 +234,18 @@ mig_external kern_return_t catch_mach_exception_raise_state(
 struct ExceptionHandler::Impl final {
     Impl(u64 code_begin_, u64 code_end_)
             : code_begin(code_begin_)
-            , code_end(code_end_) {
-        RegisterHandler();
-    }
+            , code_end(code_end_) {}
 
     void SetCallback(std::function<FakeCall(u64)> cb) {
         CodeBlockInfo cbi;
         cbi.code_begin = code_begin;
         cbi.code_end = code_end;
         cbi.cb = cb;
-        mach_handler->AddCodeBlock(cbi);
+        mach_handler.AddCodeBlock(cbi);
     }
 
     ~Impl() {
-        mach_handler->RemoveCodeBlock(code_begin);
+        mach_handler.RemoveCodeBlock(code_begin);
     }
 
 private:

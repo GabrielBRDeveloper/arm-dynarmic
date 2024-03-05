@@ -8,7 +8,10 @@
 #include <mcl/stdint.hpp>
 
 namespace oaknut {
-struct CodeGenerator;
+struct PointerCodeGeneratorPolicy;
+template<typename>
+class BasicCodeGenerator;
+using CodeGenerator = BasicCodeGenerator<PointerCodeGeneratorPolicy>;
 }  // namespace oaknut
 
 namespace Dynarmic::Backend::Arm64 {

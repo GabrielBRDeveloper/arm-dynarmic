@@ -24,7 +24,7 @@ Pool::~Pool() {
 
 void* Pool::Alloc() {
     if (remaining == 0) {
-        slabs.push_back(current_slab);
+        slabs.emplace_back(current_slab);
         AllocateNewSlab();
     }
 

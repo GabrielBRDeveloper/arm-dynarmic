@@ -30,7 +30,7 @@ static std::vector<int> ListToIndexes(u32 list) {
     std::vector<int> indexes;
     for (int i = 0; i < 32; i++) {
         if (mcl::bit::get_bit(i, list)) {
-            indexes.push_back(i);
+            indexes.emplace_back(i);
         }
     }
     return indexes;
